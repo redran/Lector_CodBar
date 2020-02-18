@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">Lector CodBar</string>
+    <string name="app_name">Lector Lajara</string>
+    <!-- Main Menu -->
+
+    <string name="leer">Nueva Lectura</string>
+    <string name="abrir">Abrir Fichero</string>
+
+    <!-- Lector Menu -->
+
+    <string name="guardar">Guardar</string>
+    <string name="enviar">Enviar al Servidor</string>
+    <string name="borrar">Limpiar</string>
+    <string name="cancelar">Cancelar</string>
+
 </resources>

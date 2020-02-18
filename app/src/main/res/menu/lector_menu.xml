@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/enviar"
+        android:id="@+id/newticket"/>
+    <item android:title="@string/guardar"
+        android:id="@+id/findticket"/>
+    <item android:title="@string/borrar"
+        android:id="@+id/limpiar"/>
+    <item android:title="@string/cancelar"
+        android:id="@+id/cancelar"/>
+
+    <item android:title="@string/enviar"
+        android:icon="@android:drawable/ic_menu_send"
+        app:showAsAction="ifRoom"
+        android:id="@+id/newticketicon"/>
+    <item android:title="@string/guardar"
+        android:icon="@android:drawable/ic_menu_save"
+        app:showAsAction="ifRoom"
+        android:id="@+id/findticketicon"/>
+
+</menu>

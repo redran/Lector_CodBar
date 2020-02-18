@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/leer"
+        android:id="@+id/lector"/>
+    <item android:title="@string/abrir"
+        android:id="@+id/abrir"/>
+
+    <item android:title="@string/leer"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="ifRoom"
+        android:id="@+id/lectoricon"/>
+    <item android:title="@string/abrir"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="ifRoom"
+        android:id="@+id/abriricon"/>
+
+</menu>
