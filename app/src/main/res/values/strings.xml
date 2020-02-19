@@ -12,4 +12,11 @@
     <string name="borrar">Limpiar</string>
     <string name="cancelar">Cancelar</string>
 
+    <!-- Escaner Menu -->
+    <string name="flash">Flash ON/OFF</string>
+
+    <!-- Botones -->
+
+    <string name="escaner">Leer Código</string>
+
 </resources>
