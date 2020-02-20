@@ -19,6 +19,8 @@ class Lector : AppCompatActivity() {
     private val MY_PERMISSIONS_REQUEST_CODE = 234
     private val CODIGO_INTENT=1
     private lateinit var gestionPermisos: GestionPermisos
+    private var leidos: MutableList<String> = mutableListOf()
+    private var listaSumados: HashMap<String,Int> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +61,17 @@ class Lector : AppCompatActivity() {
             if(resultCode==Activity.RESULT_OK){
                 if(data!=null){
                     val codigo = data?.getStringExtra("codigo")
-                    tv_codigo.text = codigo
+
+                    leidos.add(codigo) // añadimos el codigo a la lista que va a formar nuestro txt
+
+                    // Comprobamos si el codigo existe en el HashMap
+                    if(listaSumados.containsKey(codigo)){
+                        val valor= listaSumados[codigo]
+                        listaSumados[codigo] = valor!!.plus(1) // Si existe le sumamos uno
+                    }else{
+                        listaSumados[codigo]=1 // Sino existe lo añadimos
+                    }
+                    tv_codigo.text = listaSumados.toString()
                 }
             }
         }
