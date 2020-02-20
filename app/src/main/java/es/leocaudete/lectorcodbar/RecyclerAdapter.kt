@@ -32,8 +32,8 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
         val item = lineas.get(position)
         holder.btEliminar.setOnClickListener {
-            lineas.removeAt(position)
-            notifyItemRemoved(position)
+
+            eliminaRegistro(position)
         }
         holder.bind(item, context, position)
     }
@@ -51,6 +51,18 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         return lineas.size
     }
 
+    // Función encargada de mostrar un AlertDialog con informacion addicional.
+    private fun eliminaRegistro(position:Int){
+        val builder=AlertDialog.Builder(context)
+        builder.setTitle("Atención")
+        builder.setMessage("Vas a eliminar todas las lecturas de este código ¿Estás seguro?")
+        builder.setPositiveButton(android.R.string.ok){_,_->
+            lineas.removeAt(position)
+            notifyItemRemoved(position)
+        }
+        builder.setNeutralButton(android.R.string.cancel, null)
+        builder.show()
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 

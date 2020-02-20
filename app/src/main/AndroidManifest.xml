@@ -12,13 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Escanear"></activity>
-        <activity android:name=".Lector" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Escanear"
+            android:configChanges="screenSize|orientation"/>
+        <activity android:name=".Lector"
+            android:configChanges="screenSize|orientation"/>
+        <activity android:name=".MainActivity"
+            android:configChanges="screenSize|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
