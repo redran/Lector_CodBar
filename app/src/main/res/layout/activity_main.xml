@@ -6,5 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="517dp"
+        android:layout_height="614dp"
+        android:layout_marginTop="40dp"
+        android:background="@mipmap/fondo_lajara"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
