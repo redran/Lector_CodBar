@@ -19,6 +19,7 @@ class Escanear : AppCompatActivity(), ZXingScannerView.ResultHandler {
         escanerZXing=ZXingScannerView(this)
        // setContentView(R.layout.activity_escanear)
         setContentView(escanerZXing)
+        escanerZXing.flash = escanerZXing.flash != true
 
     }
 

@@ -10,17 +10,22 @@ import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import es.leocaudete.lectorcodbar.Utils.GestionPermisos
+import androidx.recyclerview.widget.LinearLayoutManager
+import es.leocaudete.lectorcodbar.modelo.Linea
+import es.leocaudete.lectorcodbar.utils.GestionPermisos
 import kotlinx.android.synthetic.main.activity_lector.*
+import kotlinx.android.synthetic.main.lista_recycled_view.*
 
 
 class Lector : AppCompatActivity() {
 
     private val MY_PERMISSIONS_REQUEST_CODE = 234
-    private val CODIGO_INTENT=1
+    private val CODIGO_INTENT = 1
+
+    private val myAdapter: RecyclerAdapter = RecyclerAdapter()
     private lateinit var gestionPermisos: GestionPermisos
-    private var leidos: MutableList<String> = mutableListOf()
-    private var listaSumados: HashMap<String,Int> = HashMap()
+    private var lineasParaTxt: MutableList<String> = mutableListOf()
+    private var lineas: MutableList<Linea> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,36 +47,71 @@ class Lector : AppCompatActivity() {
         return true
     }
 
+    private fun setUpRecyclerView() {
+
+
+        listadoLineas.setHasFixedSize(true)
+        listadoLineas.layoutManager = LinearLayoutManager(this)
+        myAdapter.RecyclerAdapter(lineas, this)
+        listadoLineas.adapter = myAdapter
+
+    }
+
     // Accion que lleva a cabo el botón al ser pulsado
     fun escanea(view: View) {
-        if (ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             Log.d("DEBUG", "El permiso ya está concedido")
             val i = Intent(this, Escanear::class.java)
             startActivityForResult(i, CODIGO_INTENT)
-        }else{
-            gestionPermisos = GestionPermisos(this,android.Manifest.permission.CAMERA,MY_PERMISSIONS_REQUEST_CODE)
+        } else {
+            gestionPermisos = GestionPermisos(
+                this,
+                android.Manifest.permission.CAMERA,
+                MY_PERMISSIONS_REQUEST_CODE
+            )
             gestionPermisos.checkPermissions()
         }
     }
 
+    // Comprueba si ya existe un objeto repetido.
+    // Si existe aumenta en 1 su cantidad
+    // si no existe añada uno nuevo con el codigo pasado por parametro
+    private fun preProcesoLinea(codigo: String) {
+
+
+        var encontrado = false
+        // Buscamos si ya existe el registro y si es asi entonces solo aumentamos la cantidad
+        // Asi no hay lineas con codigo repetido
+        for (linea in lineas) {
+            if (linea.codigo.equals(codigo)) {
+                linea.cantidad += 1
+                encontrado = true
+            }
+        }
+        if (!encontrado || lineas.isEmpty()) {
+            val nuevaLinea = Linea()
+            nuevaLinea.codigo = codigo
+            nuevaLinea.cantidad = 1
+            lineas.add(nuevaLinea)
+        }
+        //  btRestar.isEnabled = true
+    }
+
+
     // Al volver de la camara, mostramos el codigo leido
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==CODIGO_INTENT){
-            if(resultCode==Activity.RESULT_OK){
-                if(data!=null){
+        if (requestCode == CODIGO_INTENT) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
                     val codigo = data?.getStringExtra("codigo")
-
-                    leidos.add(codigo) // añadimos el codigo a la lista que va a formar nuestro txt
-
-                    // Comprobamos si el codigo existe en el HashMap
-                    if(listaSumados.containsKey(codigo)){
-                        val valor= listaSumados[codigo]
-                        listaSumados[codigo] = valor!!.plus(1) // Si existe le sumamos uno
-                    }else{
-                        listaSumados[codigo]=1 // Sino existe lo añadimos
-                    }
-                    tv_codigo.text = listaSumados.toString()
+                    preProcesoLinea(codigo)
+                    lineasParaTxt.add(codigo)
+                    setUpRecyclerView()
                 }
             }
         }

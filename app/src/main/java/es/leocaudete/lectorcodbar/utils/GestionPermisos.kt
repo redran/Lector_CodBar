@@ -1,4 +1,4 @@
-package es.leocaudete.lectorcodbar.Utils
+package es.leocaudete.lectorcodbar.utils
 
 import android.app.Activity
 import android.app.AlertDialog
