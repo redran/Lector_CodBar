@@ -1,18 +1,22 @@
 package es.leocaudete.lectorcodbar
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.leocaudete.lectorcodbar.modelo.Linea
 import es.leocaudete.lectorcodbar.utils.GestionPermisos
+import es.leocaudete.lectorcodbar.utils.ShowMessages
 import kotlinx.android.synthetic.main.activity_lector.*
 import kotlinx.android.synthetic.main.lista_recycled_view.*
 
@@ -27,14 +31,19 @@ class Lector : AppCompatActivity() {
     private var lineasParaTxt: MutableList<String> = mutableListOf()
     private var lineas: MutableList<Linea> = mutableListOf()
 
+    private lateinit var gestorMensajes: ShowMessages
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lector)
+
+        gestorMensajes=ShowMessages()
     }
 
-    // Anulamos la opción de volver a tras a través del botón del móvil
+    // Opción de volver a tras a través del botón del móvil
     override fun onBackPressed() {
-        //
+        gestorMensajes.showAlert("Atención","Estás a punto de salir y se perderán las lecturas realizadas. ¿Estás seguro?", this, {cancelar()})
+
     }
 
     /*
@@ -47,6 +56,31 @@ class Lector : AppCompatActivity() {
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.cancelar -> {
+                gestorMensajes.showAlert("Atención","Estás a punto de salir y se perderán las lecturas realizadas. ¿Estás seguro?", this, {cancelar()})
+                true
+            }
+
+            R.id.limpiar -> {
+                gestorMensajes.showAlert("Atención","Se van ha borrar todos los datos leidos. ¿Estás seguro?", this, {limpiar()})
+                true
+
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun limpiar(){
+        lineas.clear()
+        setUpRecyclerView()
+    }
+    private fun cancelar(){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     private fun setUpRecyclerView() {
 
 
