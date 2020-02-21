@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/enviar"
-        android:id="@+id/newticket"/>
+        android:id="@+id/send"/>
     <item android:title="@string/guardar"
-        android:id="@+id/findticket"/>
+        android:id="@+id/save"/>
     <item android:title="@string/borrar"
         android:id="@+id/limpiar"/>
     <item android:title="@string/cancelar"
@@ -14,10 +14,10 @@
     <item android:title="@string/enviar"
         android:icon="@android:drawable/ic_menu_send"
         app:showAsAction="ifRoom"
-        android:id="@+id/newticketicon"/>
+        android:id="@+id/send_icon"/>
     <item android:title="@string/guardar"
         android:icon="@android:drawable/ic_menu_save"
         app:showAsAction="ifRoom"
-        android:id="@+id/findticketicon"/>
+        android:id="@+id/save_icon"/>
 
 </menu>

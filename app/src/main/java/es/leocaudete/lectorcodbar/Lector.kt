@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.os.Parcelable
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,25 +21,31 @@ import es.leocaudete.lectorcodbar.utils.GestionPermisos
 import es.leocaudete.lectorcodbar.utils.ShowMessages
 import kotlinx.android.synthetic.main.activity_lector.*
 import kotlinx.android.synthetic.main.lista_recycled_view.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.ObjectOutputStream
 
 
 class Lector : AppCompatActivity() {
 
     private val MY_PERMISSIONS_REQUEST_CODE = 234
     private val CODIGO_INTENT = 1
+    private lateinit var storageLocalDir:String
 
     private val myAdapter: RecyclerAdapter = RecyclerAdapter()
     private lateinit var gestionPermisos: GestionPermisos
-    private var lineasParaTxt: MutableList<String> = mutableListOf()
-    private var lineas: MutableList<Linea> = mutableListOf()
+    private var lineas= ArrayList<Linea>()
 
     private lateinit var gestorMensajes: ShowMessages
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lector)
-
+        storageLocalDir=getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
         gestorMensajes=ShowMessages()
+
+        lineas=intent.getSerializableExtra("lineas") as ArrayList<Linea>
+        setUpRecyclerView()
     }
 
     // Opción de volver a tras a través del botón del móvil
@@ -49,6 +57,7 @@ class Lector : AppCompatActivity() {
     /*
  Infla el menú
   */
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         val inflater: MenuInflater = menuInflater
@@ -68,6 +77,14 @@ class Lector : AppCompatActivity() {
                 true
 
             }
+            R.id.save->{
+                guardar()
+                true
+            }
+            R.id.save_icon->{
+                guardar()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -76,10 +93,25 @@ class Lector : AppCompatActivity() {
         lineas.clear()
         setUpRecyclerView()
     }
+
     private fun cancelar(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun guardar(){
+
+        var fichero=File("$storageLocalDir/fichero.dat")
+        var ficheroSalida=FileOutputStream(fichero)
+        var ficheroObjetos=ObjectOutputStream(ficheroSalida)
+        for(ln in lineas){
+            ficheroObjetos.writeObject(ln)
+        }
+        ficheroObjetos.close()
+        cancelar()
+
+
     }
     private fun setUpRecyclerView() {
 
@@ -144,7 +176,6 @@ class Lector : AppCompatActivity() {
                 if (data != null) {
                     val codigo = data?.getStringExtra("codigo")
                     preProcesoLinea(codigo)
-                    lineasParaTxt.add(codigo)
                     setUpRecyclerView()
                 }
             }
