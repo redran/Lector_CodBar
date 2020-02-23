@@ -37,6 +37,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     // Tareas asincronas
-    implementation"org.jetbrains.anko:anko-common:0.10.8"
+    implementation "org.jetbrains.anko:anko-common:0.10.8"
 
 }

@@ -1,18 +1,16 @@
-package es.leocaudete.lectorcodbar
+package es.leocaudete.lectorcodbar.adapters
 
 
 import android.app.AlertDialog
 import android.content.Context
-import android.opengl.Visibility
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import es.leocaudete.lectorcodbar.R
 import es.leocaudete.lectorcodbar.modelo.Linea
 
 /**
@@ -29,7 +27,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         this.context = context
     }
 
-    override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = lineas.get(position)
         holder.btEliminar.setOnClickListener {
 
@@ -38,11 +36,13 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         holder.bind(item, context, position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return ViewHolder(
             layoutInflater.inflate(
-                R.layout.lista_recycled_view, parent, false
+                R.layout.lista_recycled_view,
+                parent,
+                false
             )
         )
     }

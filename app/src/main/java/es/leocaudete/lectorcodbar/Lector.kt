@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import es.leocaudete.lectorcodbar.adapters.RecyclerAdapter
+import es.leocaudete.lectorcodbar.modelo.Equipo
 import es.leocaudete.lectorcodbar.modelo.Linea
 import es.leocaudete.lectorcodbar.utils.GestionPermisos
 import es.leocaudete.lectorcodbar.utils.ShowMessages
@@ -37,7 +39,8 @@ class Lector : AppCompatActivity() {
     private val CODIGO_GUARDAR = 2
     private lateinit var storageLocalDir: String
 
-    private val myAdapter: RecyclerAdapter = RecyclerAdapter()
+    private val myAdapter: RecyclerAdapter =
+        RecyclerAdapter()
     private lateinit var gestionPermisos: GestionPermisos
     private var lineas = ArrayList<Linea>()
 
@@ -115,9 +118,13 @@ class Lector : AppCompatActivity() {
         }
     }
 
+
     private fun enviar() {
         if (lineas.size > 0) {
-            enviarSocket("192.168.100.27", 2000)
+            val intent = Intent(this, Destinos::class.java).apply {
+                putExtra("codigos", creaListaTxt())
+            }
+            startActivity(intent)
         } else {
             Toast.makeText(
                 this,
@@ -130,6 +137,7 @@ class Lector : AppCompatActivity() {
     }
 
     private fun limpiar() {
+
         lineas.clear()
         setUpRecyclerView()
     }
@@ -152,43 +160,7 @@ class Lector : AppCompatActivity() {
     }
 
 
-    // Recibe los datos del ordenador donde quiero enviar el fichero
-    private fun enviarSocket(serverIP: String, port: Int) {
 
-
-        doAsync {
-            val serverAddr = InetAddress.getByName(serverIP)
-            try {
-                val mySocket = Socket(serverAddr, port)
-
-                var socketOut = ObjectOutputStream(mySocket.getOutputStream())
-
-                socketOut.writeObject(creaListaTxt())
-                socketOut.flush()
-
-                var socketIn = ObjectInputStream(mySocket.getInputStream())
-                var recibido = socketIn.readBoolean()
-
-                // Esto se ejecuta dentro del hilo principal
-                uiThread {
-                    if (recibido) {
-                        longToast("Fichero enviado con exito.")
-                    } else {
-                        longToast("Fichero enviado con exito.")
-                    }
-                }
-            } catch (e: UnknownHostException) {
-                // Esto se ejecuta dentro del hilo principal
-                uiThread {
-                    longToast("Error de red.")
-                }
-            }
-
-
-        }
-
-
-    }
 
     // Va a crear un ArrayList que contiene todas las líneas leidas
     private fun creaListaTxt(): ArrayList<String> {
@@ -294,6 +266,7 @@ class Lector : AppCompatActivity() {
                 }
             }
         }
+
     }
 
 
