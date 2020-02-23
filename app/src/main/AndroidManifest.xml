@@ -7,9 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
-
-    <!-- Informamos que nuestra aplicacion usa la camara -->
+        android:maxSdkVersion="18" /> <!-- Informamos que nuestra aplicacion usa la camara -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -21,15 +19,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Escanear"
-            android:configChanges="screenSize|orientation"/>
-        <activity android:name=".Lector"
-            android:configChanges="screenSize|orientation"/>
-        <activity android:name=".MainActivity"
+        <activity android:name=".GuardarLectura"></activity>
+        <activity
+            android:name=".Escanear"
+            android:configChanges="screenSize|orientation" />
+        <activity
+            android:name=".Lector"
+            android:configChanges="screenSize|orientation" />
+        <activity
+            android:name=".MainActivity"
             android:configChanges="screenSize|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

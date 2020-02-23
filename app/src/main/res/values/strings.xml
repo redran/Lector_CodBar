@@ -4,6 +4,7 @@
 
     <string name="leer">Nueva Lectura</string>
     <string name="abrir">Abrir Fichero</string>
+    <string name="eliminar">Eliminar Ficheros</string>
 
     <!-- Lector Menu -->
 
@@ -18,5 +19,13 @@
     <!-- Botones -->
 
     <string name="escaner">Leer Código</string>
+
+    <!-- Save -->
+    <string name="save">Escribe el nombre del fichero: Un nombre descriptivo de la lectura que estas haciendo para que luego puedas continuar con la misma</string>
+
+    <!-- Text Pain -->
+    <string name="nombre">Introduce el nombre del fichero</string>
+
+
 
 </resources>
