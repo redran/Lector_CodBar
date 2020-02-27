@@ -68,17 +68,17 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
 
         val codigo = view.findViewById(R.id.tv_codigo) as TextView
-        val cantidad = view.findViewById(R.id.tv_cantidad) as TextView
-        val btRestar = view.findViewById(R.id.btRestar) as ImageButton
+       // val cantidad = view.findViewById(R.id.tv_cantidad) as TextView
+        //val btRestar = view.findViewById(R.id.btRestar) as ImageButton
         val btEliminar = view.findViewById(R.id.btEliminar) as ImageButton
 
 
         fun bind(linea: Linea, context: Context, position:Int) {
 
             codigo.text = linea.codigo
-            cantidad.text = linea.cantidad.toString()
+           // cantidad.text = linea.cantidad.toString()
 
-            btRestar.setOnClickListener {
+           /* btRestar.setOnClickListener {
                 if (linea.cantidad > 1) {
                     linea.cantidad -= 1
                     cantidad.text = linea.cantidad.toString()
@@ -91,7 +91,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
                     ).show()
 
                 }
-            }
+            }*/
 
 
         }

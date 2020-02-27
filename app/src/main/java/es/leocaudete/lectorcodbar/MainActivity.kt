@@ -172,7 +172,8 @@ class MainActivity : AppCompatActivity() {
                     fichero = File("$storageLocalDir/$nom_fich" )
 
                     if(fichero!!.exists()){
-                        File("$storageLocalDir/$nom_fich" ).delete()
+                        gestionMesajes.showAlert("Atención", "¿Estás seguro de que quieres eliminar el fichero: $nom_fich ",this, {File("$storageLocalDir/$nom_fich" ).delete()} )
+
                     }
                 }
 

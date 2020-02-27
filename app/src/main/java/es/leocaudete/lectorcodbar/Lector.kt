@@ -167,9 +167,10 @@ class Lector : AppCompatActivity() {
         var lista = ArrayList<String>()
 
         for (linea in lineas) {
-            for (i in 0 until linea.cantidad) {
+            /*for (i in 0 until linea.cantidad) {
                 lista.add(linea.codigo)
-            }
+            }*/
+            lista.add(linea.codigo)
         }
         return lista
     }
@@ -204,6 +205,9 @@ class Lector : AppCompatActivity() {
         }
     }
 
+    private fun sobreEscribeLectura(index:Int, codigo:String){
+        lineas[index].codigo=codigo
+    }
     // Comprueba si ya existe un objeto repetido.
     // Si existe aumenta en 1 su cantidad
     // si no existe añada uno nuevo con el codigo pasado por parametro
@@ -214,15 +218,19 @@ class Lector : AppCompatActivity() {
         // Buscamos si ya existe el registro y si es asi entonces solo aumentamos la cantidad
         // Asi no hay lineas con codigo repetido
         for (linea in lineas) {
-            if (linea.codigo.equals(codigo)) {
-                linea.cantidad += 1
-                encontrado = true
+            if (linea.codigo.substring(5,11).equals(codigo.substring(5,11))) {
+                gestorMensajes.showAlert(
+                    "Atención",
+                    "El paquete ya se ha leido. ¿Deseas sobreescribir la lectura?",
+                    this,
+                    { linea.codigo=codigo })
+                encontrado=true
             }
         }
         if (!encontrado || lineas.isEmpty()) {
             val nuevaLinea = Linea()
             nuevaLinea.codigo = codigo
-            nuevaLinea.cantidad = 1
+           // nuevaLinea.cantidad = 1
             lineas.add(nuevaLinea)
         }
         //  btRestar.isEnabled = true

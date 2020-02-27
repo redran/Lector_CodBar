@@ -29,7 +29,7 @@ class Destinos : AppCompatActivity() {
     // De momento lo rellenaremos de forma manual
     private fun creaLista(): ArrayList<Equipo> {
         val lista= ArrayList<Equipo>()
-        lista.add(Equipo("192.168.1.19",2000, "Entrada", R.mipmap.recepcion))
+        lista.add(Equipo("192.168.1.20",2000, "Entrada", R.mipmap.recepcion))
         lista.add(Equipo("192.168.1.5",2000, "Mostrador Interior", R.mipmap.mostrador))
         lista.add(Equipo("192.168.1.9",2000, "Almacén", R.mipmap.almacen))
         lista.add(Equipo("192.168.1.16",2000, "Nave 2", R.mipmap.nave2))

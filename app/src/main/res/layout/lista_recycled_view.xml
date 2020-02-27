@@ -16,7 +16,7 @@
         android:layout_marginBottom="10dp"
         android:text="886111974887" />
 
-    <TextView
+<!--    <TextView
         android:id="@+id/tv_cantidad"
         android:layout_width="25dp"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />-->
 
     <ImageButton
         android:id="@+id/btEliminar"
