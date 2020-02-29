@@ -218,7 +218,9 @@ class Lector : AppCompatActivity() {
         // Buscamos si ya existe el registro y si es asi entonces solo aumentamos la cantidad
         // Asi no hay lineas con codigo repetido
         for (linea in lineas) {
-            if (linea.codigo.substring(5,11).equals(codigo.substring(5,11))) {
+            var partidaLeida=codigo.substring(5,14)
+            var partidaAlmacenada=linea.codigo.substring(5,14)
+            if (partidaAlmacenada.equals(partidaLeida)) {
                 gestorMensajes.showAlert(
                     "Atención",
                     "El paquete ya se ha leido. ¿Deseas sobreescribir la lectura?",

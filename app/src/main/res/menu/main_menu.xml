@@ -8,6 +8,8 @@
         android:id="@+id/abrir"/>
     <item android:title="@string/eliminar"
         android:id="@+id/eliminar"/>
+    <item android:title="@string/salir"
+        android:id="@+id/salir"/>
 
     <item android:title="@string/leer"
         android:icon="@android:drawable/ic_menu_add"

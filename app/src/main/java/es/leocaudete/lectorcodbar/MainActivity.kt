@@ -75,6 +75,10 @@ class MainActivity : AppCompatActivity() {
                 eliminar()
                 true
             }
+            R.id.salir->{
+                System.exit(0)
+                true
+            }
 
 
             else -> super.onOptionsItemSelected(item)

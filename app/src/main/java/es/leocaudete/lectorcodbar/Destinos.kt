@@ -3,6 +3,7 @@ package es.leocaudete.lectorcodbar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.MenuItem
 import es.leocaudete.lectorcodbar.adapters.EquipoAdapter
 import es.leocaudete.lectorcodbar.modelo.Equipo
 import kotlinx.android.synthetic.main.activity_destinos.*
@@ -24,8 +25,22 @@ class Destinos : AppCompatActivity() {
         equiposGridView.adapter=adapter
 
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        when(item?.itemId){
+
+            android.R.id.home->{
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
+    }
     // De momento lo rellenaremos de forma manual
     private fun creaLista(): ArrayList<Equipo> {
         val lista= ArrayList<Equipo>()
