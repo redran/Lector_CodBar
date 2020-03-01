@@ -1,6 +1,7 @@
 package es.leocaudete.lectorcodbar
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,26 +11,20 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.leocaudete.lectorcodbar.adapters.RecyclerAdapter
-import es.leocaudete.lectorcodbar.modelo.Equipo
 import es.leocaudete.lectorcodbar.modelo.Linea
+import es.leocaudete.lectorcodbar.modelo.LineaSimple
 import es.leocaudete.lectorcodbar.utils.GestionPermisos
 import es.leocaudete.lectorcodbar.utils.ShowMessages
 import kotlinx.android.synthetic.main.activity_lector.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.FileOutputStream
-import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.net.InetAddress
-import java.net.Socket
-import java.net.UnknownHostException
 
 
 class Lector : AppCompatActivity() {
@@ -37,12 +32,23 @@ class Lector : AppCompatActivity() {
     private val MY_PERMISSIONS_REQUEST_CODE = 234
     private val CODIGO_ESCANEAR = 1
     private val CODIGO_GUARDAR = 2
+
+    // Desglose indices string
+    private val INICIO_PARTIDA=0
+    private val FIN_PARTIDA=9
+    private val INICIO_PAQUETE=9
+    private val FIN_PAQUETE=13
+    private val INICIO_PIES=14
+    private val FIN_PIES=17
+
     private lateinit var storageLocalDir: String
 
     private val myAdapter: RecyclerAdapter =
         RecyclerAdapter()
     private lateinit var gestionPermisos: GestionPermisos
-    private var lineas = ArrayList<Linea>()
+    private var lineasComletas = ArrayList<Linea>()
+
+    private var candidad_pies: Float = 0f
 
     private lateinit var gestorMensajes: ShowMessages
 
@@ -53,8 +59,9 @@ class Lector : AppCompatActivity() {
         storageLocalDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
         gestorMensajes = ShowMessages()
 
-        lineas = intent.getSerializableExtra("lineas") as ArrayList<Linea>
+        lineasComletas = intent.getSerializableExtra("lineas") as ArrayList<Linea>
         setUpRecyclerView()
+
     }
 
     // Opción de volver a tras a través del botón del móvil
@@ -120,7 +127,7 @@ class Lector : AppCompatActivity() {
 
 
     private fun enviar() {
-        if (lineas.size > 0) {
+        if (lineasComletas.size > 0) {
             val intent = Intent(this, Destinos::class.java).apply {
                 putExtra("codigos", creaListaTxt())
             }
@@ -138,7 +145,7 @@ class Lector : AppCompatActivity() {
 
     private fun limpiar() {
 
-        lineas.clear()
+        lineasComletas.clear()
         setUpRecyclerView()
     }
 
@@ -150,7 +157,7 @@ class Lector : AppCompatActivity() {
 
     private fun guardar() {
 
-        if (lineas.size > 0) {
+        if (lineasComletas.size > 0) {
             val intent = Intent(this, GuardarLectura::class.java)
             startActivityForResult(intent, CODIGO_GUARDAR)
         } else {
@@ -160,17 +167,14 @@ class Lector : AppCompatActivity() {
     }
 
 
-
-
     // Va a crear un ArrayList que contiene todas las líneas leidas
     private fun creaListaTxt(): ArrayList<String> {
         var lista = ArrayList<String>()
 
-        for (linea in lineas) {
-            /*for (i in 0 until linea.cantidad) {
-                lista.add(linea.codigo)
-            }*/
-            lista.add(linea.codigo)
+        for (linea in lineasComletas) {
+           for(sublinea in linea.desglose){
+               lista.add(sublinea.codigo)
+           }
         }
         return lista
     }
@@ -180,7 +184,7 @@ class Lector : AppCompatActivity() {
 
         listadoLineas.setHasFixedSize(true)
         listadoLineas.layoutManager = LinearLayoutManager(this)
-        myAdapter.RecyclerAdapter(lineas, this)
+        myAdapter.RecyclerAdapter(lineasComletas, this)
         listadoLineas.adapter = myAdapter
 
     }
@@ -205,39 +209,104 @@ class Lector : AppCompatActivity() {
         }
     }
 
-    private fun sobreEscribeLectura(index:Int, codigo:String){
-        lineas[index].codigo=codigo
-    }
-    // Comprueba si ya existe un objeto repetido.
-    // Si existe aumenta en 1 su cantidad
-    // si no existe añada uno nuevo con el codigo pasado por parametro
+
+
+    // Procesa el codigo leido y rellena los Arrays de Objetos
     private fun preProcesoLinea(codigo: String) {
 
 
+        var partida = codigo.substring(INICIO_PARTIDA, FIN_PARTIDA)
+        var paquete = codigo.substring(INICIO_PAQUETE, FIN_PAQUETE)
+        var codigo_unico="00000$partida$paquete"
+        var pies=0
+
+        // Comprobamos que el paquete no se haya leido ya
         var encontrado = false
-        // Buscamos si ya existe el registro y si es asi entonces solo aumentamos la cantidad
-        // Asi no hay lineas con codigo repetido
-        for (linea in lineas) {
-            var partidaLeida=codigo.substring(5,14)
-            var partidaAlmacenada=linea.codigo.substring(5,14)
-            if (partidaAlmacenada.equals(partidaLeida)) {
-                gestorMensajes.showAlert(
-                    "Atención",
-                    "El paquete ya se ha leido. ¿Deseas sobreescribir la lectura?",
-                    this,
-                    { linea.codigo=codigo })
-                encontrado=true
+        for (linea in lineasComletas) {
+
+            for(sublineas in linea.desglose){
+                if (sublineas.codigo.equals(codigo_unico)) {
+                    gestorMensajes.showAlertOneButton(
+                        "Atención",
+                        "El paquete ya se ha leido.",
+                        this
+                    )
+                    encontrado = true
+                }
             }
+
         }
-        if (!encontrado || lineas.isEmpty()) {
-            val nuevaLinea = Linea()
-            nuevaLinea.codigo = codigo
-           // nuevaLinea.cantidad = 1
-            lineas.add(nuevaLinea)
+
+
+        // Los codigos son claves únicas asi que nunca se repiten
+        if (!encontrado || lineasComletas.isEmpty()) {
+
+            // comprobamos si la partida existe y sino la agregegamos
+            var indexEncontrado = -1
+            for (i in lineasComletas.indices) {
+              if(lineasComletas[i].partida.equals(partida)){
+                  indexEncontrado=i
+              }
+            }
+
+            // Si no se encuentra se Agrega uno nuevo
+            var indexActual:Int
+            if(indexEncontrado==-1){
+                val nuevaLinea = Linea()
+                nuevaLinea.partida = partida
+                lineasComletas.add(nuevaLinea)
+                indexActual=lineasComletas.size-1
+            }
+            // Si se encuentra nos posicionamos en el para añadir lo leido en su subarray
+            else{
+                indexActual=indexEncontrado
+            }
+
+            //Ahora añadimos la linea con el codigo bueno y los pies en el array LineaSimple
+            var lineaSimple=LineaSimple()
+            lineaSimple.codigo=codigo_unico
+
+            // Aqui tenemos la diferencia
+            // Si es una etiqueta antigua llamamos al modal para que ingrese los pies
+            // Si es nueva cogemos los pies del desglose del string leido
+            if (codigo.length == 13) {
+                lineasComletas[indexActual].desglose.add(lineaSimple)
+                mostrarModal(indexActual, lineasComletas[indexActual].desglose.size-1)
+            } else {
+                lineaSimple.pies = codigo.substring(INICIO_PIES, FIN_PIES).toFloat()
+                lineasComletas[indexActual].desglose.add(lineaSimple)
+            }
+
+
+
+
+
         }
-        //  btRestar.isEnabled = true
     }
 
+    private fun mostrarModal(posicion: Int, posicionSubArray:Int) {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        builder.setTitle("Gestor de cantidad")
+        val dialogLayout = inflater.inflate(R.layout.alert_dialog_with_eddittext, null)
+        val editText = dialogLayout.findViewById<EditText>(R.id.etPies)
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("ACEPTAR") { dialogInterface, i ->
+            aceptaModal(
+                posicion,
+                posicionSubArray,
+                editText.text.toString().toFloat()
+
+            )
+        }
+        builder.show()
+
+    }
+
+    private fun aceptaModal(posicion: Int, posicionSubArray:Int,cantidad: Float) {
+        lineasComletas[posicion].desglose[posicionSubArray].pies = cantidad // Actualizamos la línea del ArrayCompleto
+        setUpRecyclerView()
+    }
 
     // Al volver de la camara, mostramos el codigo leido
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -247,7 +316,7 @@ class Lector : AppCompatActivity() {
                 if (data != null) {
                     val codigo = data?.getStringExtra("codigo")
                     preProcesoLinea(codigo)
-                    setUpRecyclerView()
+
                 }
             }
         }
@@ -260,7 +329,7 @@ class Lector : AppCompatActivity() {
                     if (!fichero.exists()) {
                         var ficheroSalida = FileOutputStream(fichero)
                         var ficheroObjetos = ObjectOutputStream(ficheroSalida)
-                        for (ln in lineas) {
+                        for (ln in lineasComletas) {
                             ficheroObjetos.writeObject(ln)
                         }
                         ficheroObjetos.close()

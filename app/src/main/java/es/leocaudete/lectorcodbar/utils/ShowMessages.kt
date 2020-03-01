@@ -15,4 +15,12 @@ class ShowMessages {
         builder.setNeutralButton(android.R.string.cancel, null)
         builder.show()
     }
+    fun showAlertOneButton(title:String, message:String, context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+
+        builder.setNeutralButton(android.R.string.ok, null)
+        builder.show()
+    }
 }

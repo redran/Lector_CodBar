@@ -8,45 +8,52 @@
 
     <TextView
         android:id="@+id/tv_codigo"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="21dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="5dp"
         android:layout_marginBottom="10dp"
-        android:text="886111974887" />
+        android:text="" />
 
-<!--    <TextView
+    <TextView
         android:id="@+id/tv_cantidad"
-        android:layout_width="25dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:text="25"
+        android:text=""
         android:textAlignment="center" />
 
     <ImageButton
-        android:id="@+id/btRestar"
-        android:layout_width="5dp"
-        android:layout_height="21dp"
+        android:id="@+id/btModicarLinea"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />-->
+        android:adjustViewBounds="true"
+        android:background="@android:color/white"
+        android:scaleType="fitCenter"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <ImageButton
         android:id="@+id/btEliminar"
         android:layout_width="wrap_content"
-        android:layout_height="22dp"
+        android:layout_height="26dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        android:background="@android:color/white"
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        />
 
 </LinearLayout>

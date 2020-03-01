@@ -30,9 +30,10 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = lineas.get(position)
         holder.btEliminar.setOnClickListener {
-
+            // eliminara todos los que tengan la misma partida
             eliminaRegistro(position)
         }
+        holder.lineas=lineas
         holder.bind(item, context, position)
     }
 
@@ -68,31 +69,21 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
 
         val codigo = view.findViewById(R.id.tv_codigo) as TextView
-       // val cantidad = view.findViewById(R.id.tv_cantidad) as TextView
-        //val btRestar = view.findViewById(R.id.btRestar) as ImageButton
+        val cantidad = view.findViewById(R.id.tv_cantidad) as TextView
+        val btRestar = view.findViewById(R.id.btModicarLinea) as ImageButton
         val btEliminar = view.findViewById(R.id.btEliminar) as ImageButton
+        var lineas:MutableList<Linea> = mutableListOf()
+
 
 
         fun bind(linea: Linea, context: Context, position:Int) {
 
-            codigo.text = linea.codigo
-           // cantidad.text = linea.cantidad.toString()
-
-           /* btRestar.setOnClickListener {
-                if (linea.cantidad > 1) {
-                    linea.cantidad -= 1
-                    cantidad.text = linea.cantidad.toString()
-
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Cantidad no puede ser menor que 1. Elimina la línea entera con el icono de la papelera",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                }
-            }*/
-
+            codigo.text = linea.partida
+            var totalPies=0f
+            for(sublinea in linea.desglose){
+                totalPies+=sublinea.pies
+            }
+            cantidad.text = totalPies.toString()
 
         }
 

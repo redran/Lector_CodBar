@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="21dp"
-        android:layout_marginEnd="21dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,47 +19,47 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="200dp"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Código de Barras"
+            android:text="@string/partida"
             android:textStyle="bold" />
 
-        <!--<TextView
+        <TextView
             android:id="@+id/textView2"
-            android:layout_width="60dp"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Cantidad"
+            android:text="@string/total_pies"
             android:textAlignment="center"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView3"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="21dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:text="Restar"
+            android:text="@string/modifica_pies"
             android:textAlignment="center"
-            android:textStyle="bold" />-->
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="22dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:text="Borrar línea"
+            android:text="@string/elimina_partida"
             android:textAlignment="center"
             android:textStyle="bold" />
 
@@ -79,16 +79,17 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:onClick="escanea"
         android:id="@+id/btEscanear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="21dp"
         android:layout_marginEnd="21dp"
         android:layout_marginBottom="25dp"
+        android:onClick="escanea"
         android:text="@string/escaner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
