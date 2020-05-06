@@ -19,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Destinos"/>
+        <activity android:name=".utils.Ficheros"></activity>
+        <activity android:name=".Desglose" />
+        <activity android:name=".Destinos" />
         <activity android:name=".GuardarLectura" />
         <activity
             android:name=".Escanear"

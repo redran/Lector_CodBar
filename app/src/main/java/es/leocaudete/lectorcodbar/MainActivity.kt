@@ -1,13 +1,15 @@
 package es.leocaudete.lectorcodbar
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import es.leocaudete.lectorcodbar.modelo.Linea
 import es.leocaudete.lectorcodbar.utils.ShowMessages
@@ -15,25 +17,22 @@ import java.io.EOFException
 import java.io.File
 import java.io.FileInputStream
 import java.io.ObjectInputStream
-import java.net.URI
-import java.nio.file.Path
-import java.nio.file.Paths
 
 class MainActivity : AppCompatActivity() {
 
-    private val OPEN_FILE_CODE=1
-    private val DELETE_FILE_CODE=2
-
-    private lateinit var storageLocalDir:String
-    private var lineas=ArrayList<Linea>()
-    var gestionMesajes= ShowMessages()
+    private lateinit var storageLocalDir: String
+    private var lineas = ArrayList<Linea>()
+    var gestionMesajes = ShowMessages()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        storageLocalDir=getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
-
+        storageLocalDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
+        val home_dir = File(storageLocalDir)
+        if (!home_dir.exists()) {
+            home_dir.mkdirs()
+        }
     }
 
     // Anulamos la opción de volver a tras a través del botón del móvil
@@ -50,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.menu.main_menu, menu)
         return true
     }
+
     /*
   Acciones sobre los elementos del menú al hacer click
    */
@@ -59,23 +59,23 @@ class MainActivity : AppCompatActivity() {
                 iniciaNuevaLectura()
                 true
             }
-            R.id.lectoricon->{
+            R.id.lectoricon -> {
                 iniciaNuevaLectura()
                 true
             }
-            R.id.abrir->{
+            R.id.abrir -> {
                 abrir()
                 true
             }
-            R.id.abriricon->{
+            R.id.abriricon -> {
                 abrir()
                 true
             }
-            R.id.eliminar->{
+            R.id.eliminar -> {
                 eliminar()
                 true
             }
-            R.id.salir->{
+            R.id.salir -> {
                 System.exit(0)
                 true
             }
@@ -86,9 +86,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun iniciaNuevaLectura(){
+    private fun iniciaNuevaLectura() {
 
-        val intent=Intent(this, Lector::class.java).apply {
+        val intent = Intent(this, Lector::class.java).apply {
             putExtra("lineas", lineas)
         }
         startActivity(intent)
@@ -96,96 +96,120 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun eliminar(){
+    private fun eliminar() {
 
-        val intent=Intent(Intent.ACTION_OPEN_DOCUMENT).apply{
-            addCategory(Intent.CATEGORY_OPENABLE)
-            data=Uri.parse(storageLocalDir)
-            type="*/*"
-        }
-
-        startActivityForResult(intent, DELETE_FILE_CODE )
+        myAlertDialogSinglePersistentList(1)
     }
 
-    private fun abrir(){
-
-        val intent=Intent(Intent.ACTION_OPEN_DOCUMENT).apply{
-            addCategory(Intent.CATEGORY_OPENABLE)
-            data=Uri.parse(storageLocalDir)
-            type="*/*"
-        }
-
-        startActivityForResult(intent, OPEN_FILE_CODE )
-
-
+    private fun abrir() {
+        myAlertDialogSinglePersistentList(2)
 
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==OPEN_FILE_CODE){
-            if(resultCode== Activity.RESULT_OK){
-                var fichero:File?=null
-                data?.data?.also{uri ->
-                    var ruta=(uri.lastPathSegment.toString()).split('/')
 
-                    var nom_fich=ruta[ruta.size-1]
 
-                    fichero = File("$storageLocalDir/$nom_fich" )
+    /**
+     * Abre un Fichero pasado por parametro
+     *
+     */
+    fun abre(nombre: String) {
+        var fichero = File("$storageLocalDir/$nombre")
+
+        if (fichero!!.exists()) {
+
+            val ficheroSalida = FileInputStream(fichero)
+            val ficheroObjetos = ObjectInputStream(ficheroSalida)
+
+
+            var ln = ficheroObjetos.readObject() as? Linea
+
+            try {
+                while (ln != null) {
+                    lineas.add(ln)
+                    ln = ficheroObjetos.readObject() as? Linea
                 }
-                if(fichero!!.exists()){
-                    // val fichero= File("$storageLocalDir/fichero.dat")
-                    val ficheroSalida=FileInputStream(fichero)
-                    val ficheroObjetos = ObjectInputStream(ficheroSalida)
-
-
-                    var ln=ficheroObjetos.readObject() as? Linea
-
-                    try{
-                        while(ln!=null){
-                            lineas.add(ln)
-                            ln=ficheroObjetos.readObject() as? Linea
-                        }
-                    }catch(e:EOFException){
-                        print("Final de Fichero")
-                    }
-
-                    ficheroObjetos.close()
-
-                    if(lineas.size>0){
-                        iniciaNuevaLectura()
-                    }
-                }
-
-
-            }
-            if(resultCode== Activity.RESULT_CANCELED){
-                gestionMesajes.showAlert("Información", "No has seleccionado ningún fichero. ¿Quieres iniciar una nueva lectura?",this, {iniciaNuevaLectura()} )
+            } catch (e: EOFException) {
+                print("Final de Fichero")
             }
 
+            ficheroObjetos.close()
+
+            if (lineas.size > 0) {
+                iniciaNuevaLectura()
+            }
         }
-        if(requestCode==DELETE_FILE_CODE){
-            if(resultCode== Activity.RESULT_OK){
-                var fichero:File?=null
-                data?.data?.also{uri ->
-                    var ruta=(uri.lastPathSegment.toString()).split('/')
+    }
 
-                    var nom_fich=ruta[ruta.size-1]
+    /**
+     * Elimina un fichero pasado por parametro
+     */
+    fun elimina(nombre: String) {
+        var fichero = File("$storageLocalDir/$nombre")
 
-                    fichero = File("$storageLocalDir/$nom_fich" )
-
-                    if(fichero!!.exists()){
-                        gestionMesajes.showAlert("Atención", "¿Estás seguro de que quieres eliminar el fichero: $nom_fich ",this, {File("$storageLocalDir/$nom_fich" ).delete()} )
-
-                    }
-                }
-
-            }
-            if(resultCode== Activity.RESULT_CANCELED){
-                gestionMesajes.showAlert("Información", "No has seleccionado ningún fichero. ¿Quieres iniciar una nueva lectura?",this, {iniciaNuevaLectura()} )
-            }
+        if (fichero!!.exists()) {
+            gestionMesajes.showAlert(
+                "Atención",
+                "¿Estás seguro de que quieres eliminar el fichero: $nombre ",
+                this,
+                { File("$storageLocalDir/$nombre").delete() })
 
         }
     }
+
+    /**
+     * Opcion 1: Delete File
+     * Opcion 2: Load File
+     */
+    private fun myAlertDialogSinglePersistentList(opcion: Int) {
+        // Primero obtenemos los nosmbres de los ficheros
+        var dir = File(storageLocalDir)
+        var hijos = dir.list()
+
+        if (hijos.size > 0) {
+            val builder = AlertDialog.Builder(this)
+
+            builder.apply {
+                if (opcion == 2) {
+                    setTitle("Selecciona un fichero para abrir")
+                } else {
+                    setTitle("Selecciona un fichero para eliminar")
+                }
+
+
+                setSingleChoiceItems(hijos, 0) { _, which ->
+                    Log.d(
+                        "DEBUG",
+                        hijos[which]
+                    )
+                }
+                setPositiveButton(android.R.string.yes) { dialog, _ ->
+                    val selectedPosition =
+                        (dialog as AlertDialog).listView.checkedItemPosition
+                    if (opcion == 1) {
+                        elimina(hijos[selectedPosition])
+                    } else {
+                        abre(hijos[selectedPosition])
+                    }
+                }
+                setNegativeButton(android.R.string.no) { _, _ ->
+                    Toast.makeText(
+                        context,
+                        "Se ha cancelado la operación",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            builder.show().window.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+        } else {
+            // Sino tiene nombres mostramos un texto informando
+            Toast.makeText(this, "No hay ficheros guardados", Toast.LENGTH_LONG).show()
+        }
+
+
+    }
+
 }

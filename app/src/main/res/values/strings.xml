@@ -39,5 +39,22 @@
     <string name="modifica_pies">Modificar</string>
     <string name="elimina_partida">Eliminar</string>
 
+    <!-- Recycled Deglose-->
+    <string name="paquete">Paquete</string>
+    <string name="pies">Pies</string>
+    <string name="editar">Editar</string>
+
+    <!-- Alert Dialog-->
+    <string name="yes">Ok</string>
+
+    <string-array name="array_nombres">
+        <item>Leo</item>
+        <item>Reme</item>
+        <item>Pedro</item>
+        <item>Malen</item>
+        <item>Lara</item>
+        <item>Isa</item>
+    </string-array>
+
 
 </resources>

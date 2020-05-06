@@ -7,10 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,13 +30,16 @@ class Lector : AppCompatActivity() {
     private val CODIGO_ESCANEAR = 1
     private val CODIGO_GUARDAR = 2
 
+    // Tamaño etiquetas
+    private val LONGITUD_ETIQUETA_ANTIGUA=14
+    private val LONGITUD_ETIQUETA_NUEVA=18
     // Desglose indices string
-    private val INICIO_PARTIDA=0
-    private val FIN_PARTIDA=9
-    private val INICIO_PAQUETE=9
-    private val FIN_PAQUETE=13
+    private val INICIO_PARTIDA=5
+    private val FIN_PARTIDA=11
+    private val INICIO_PAQUETE=11
+    private val FIN_PAQUETE=14
     private val INICIO_PIES=14
-    private val FIN_PIES=17
+    private val FIN_PIES=14
 
     private lateinit var storageLocalDir: String
 
@@ -59,6 +59,7 @@ class Lector : AppCompatActivity() {
         storageLocalDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString()
         gestorMensajes = ShowMessages()
 
+        // Si es nueva lectura estara vacio y sino tendra lo leido del fichero de texto
         lineasComletas = intent.getSerializableExtra("lineas") as ArrayList<Linea>
         setUpRecyclerView()
 
@@ -222,6 +223,7 @@ class Lector : AppCompatActivity() {
 
         // Comprobamos que el paquete no se haya leido ya
         var encontrado = false
+
         for (linea in lineasComletas) {
 
             for(sublineas in linea.desglose){
@@ -239,6 +241,7 @@ class Lector : AppCompatActivity() {
 
 
         // Los codigos son claves únicas asi que nunca se repiten
+        // Sino se ha encontrado o es la primera lectura
         if (!encontrado || lineasComletas.isEmpty()) {
 
             // comprobamos si la partida existe y sino la agregegamos
@@ -269,7 +272,7 @@ class Lector : AppCompatActivity() {
             // Aqui tenemos la diferencia
             // Si es una etiqueta antigua llamamos al modal para que ingrese los pies
             // Si es nueva cogemos los pies del desglose del string leido
-            if (codigo.length == 13) {
+            if (codigo.length == LONGITUD_ETIQUETA_ANTIGUA) {
                 lineasComletas[indexActual].desglose.add(lineaSimple)
                 mostrarModal(indexActual, lineasComletas[indexActual].desglose.size-1)
             } else {
@@ -299,7 +302,7 @@ class Lector : AppCompatActivity() {
 
             )
         }
-        builder.show()
+        builder.show().window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
 
     }
 
@@ -320,6 +323,7 @@ class Lector : AppCompatActivity() {
                 }
             }
         }
+        // Guardamos aquí
         if (requestCode == CODIGO_GUARDAR) {
             if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {

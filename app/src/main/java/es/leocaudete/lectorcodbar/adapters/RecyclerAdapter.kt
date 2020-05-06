@@ -3,13 +3,18 @@ package es.leocaudete.lectorcodbar.adapters
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.startActivity
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import es.leocaudete.lectorcodbar.Desglose
 import es.leocaudete.lectorcodbar.R
 import es.leocaudete.lectorcodbar.modelo.Linea
 
@@ -23,7 +28,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     lateinit var context: Context
 
     fun RecyclerAdapter(lineas: MutableList<Linea>, context: Context) {
-        this.lineas = lineas
+        this.lineas = lineas  // Todas las lecturas
         this.context = context
     }
 
@@ -72,7 +77,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         val cantidad = view.findViewById(R.id.tv_cantidad) as TextView
         val btRestar = view.findViewById(R.id.btModicarLinea) as ImageButton
         val btEliminar = view.findViewById(R.id.btEliminar) as ImageButton
-        var lineas:MutableList<Linea> = mutableListOf()
+        var lineas:MutableList<Linea> = mutableListOf() // La lista completa
 
 
 
@@ -85,7 +90,20 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
             }
             cantidad.text = totalPies.toString()
 
+            var arrayLecturas=ArrayList(lineas)
+            btRestar.setOnClickListener {
+                val ArrayLineas=ArrayList(lineas)
+                val intent=Intent(context, Desglose::class.java).apply {
+                    putExtra("lineas", ArrayLineas )
+                    putExtra("posicion", position )
+                }
+                context.startActivity(intent)
+
+            }
+
         }
+
+
 
     }
 }
