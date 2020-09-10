@@ -19,6 +19,7 @@ import es.leocaudete.lectorcodbar.modelo.LineaSimple
 import es.leocaudete.lectorcodbar.utils.GestionPermisos
 import es.leocaudete.lectorcodbar.utils.ShowMessages
 import kotlinx.android.synthetic.main.activity_lector.*
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
@@ -32,14 +33,14 @@ class Lector : AppCompatActivity() {
 
     // Tamaño etiquetas
     private val LONGITUD_ETIQUETA_ANTIGUA=14
-    private val LONGITUD_ETIQUETA_NUEVA=18
+    private val LONGITUD_ETIQUETA_NUEVA=22
     // Desglose indices string
     private val INICIO_PARTIDA=5
     private val FIN_PARTIDA=11
     private val INICIO_PAQUETE=11
     private val FIN_PAQUETE=14
     private val INICIO_PIES=14
-    private val FIN_PIES=14
+    private val FIN_PIES=22
 
     private lateinit var storageLocalDir: String
 
@@ -215,76 +216,81 @@ class Lector : AppCompatActivity() {
     // Procesa el codigo leido y rellena los Arrays de Objetos
     private fun preProcesoLinea(codigo: String) {
 
+        if (codigo.length == LONGITUD_ETIQUETA_ANTIGUA || codigo.length == LONGITUD_ETIQUETA_NUEVA){
 
-        var partida = codigo.substring(INICIO_PARTIDA, FIN_PARTIDA)
-        var paquete = codigo.substring(INICIO_PAQUETE, FIN_PAQUETE)
-        var codigo_unico="00000$partida$paquete"
-        var pies=0
+            var partida = codigo.substring(INICIO_PARTIDA, FIN_PARTIDA)
+            var paquete = codigo.substring(INICIO_PAQUETE, FIN_PAQUETE)
+            var codigo_unico="00000$partida$paquete" // Representa un paquete y partida
+            var pies=0
 
-        // Comprobamos que el paquete no se haya leido ya
-        var encontrado = false
+            // Comprobamos que el paquete no se haya leido ya
+            // No comprobamos la cantidad porque puede ser que se haya modificado y ya no coincidira con la lectura
+            var encontrado = false
 
-        for (linea in lineasComletas) {
+            for (linea in lineasComletas) {
 
-            for(sublineas in linea.desglose){
-                if (sublineas.codigo.equals(codigo_unico)) {
-                    gestorMensajes.showAlertOneButton(
-                        "Atención",
-                        "El paquete ya se ha leido.",
-                        this
-                    )
-                    encontrado = true
+                for(sublineas in linea.desglose){
+                    if (sublineas.codigo.equals(codigo_unico)) {
+                        gestorMensajes.showAlertOneButton(
+                            "Atención",
+                            "El paquete ya se ha leido.",
+                            this
+                        )
+                        encontrado = true
+                    }
+                }
+
+            }
+
+
+            // Los codigos son claves únicas asi que nunca se repiten
+            // Sino se ha encontrado o es la primera lectura
+            if (!encontrado || lineasComletas.isEmpty()) {
+
+                // comprobamos si la partida existe y sino la agregegamos
+                var indexEncontrado = -1
+                for (i in lineasComletas.indices) {
+                    if(lineasComletas[i].partida.equals(partida)){
+                        indexEncontrado=i
+                    }
+                }
+
+                // Si no se encuentra se Agrega uno nuevo
+                var indexActual:Int
+                if(indexEncontrado==-1){
+                    val nuevaLinea = Linea()
+                    nuevaLinea.partida = partida
+                    lineasComletas.add(nuevaLinea)
+                    indexActual=lineasComletas.size-1
+                }
+                // Si se encuentra nos posicionamos en él para añadir lo leído en su subarray
+                else{
+                    indexActual=indexEncontrado
+                }
+
+                //Ahora añadimos la linea con el codigo bueno y los pies en el array LineaSimple
+                var lineaSimple=LineaSimple()
+                lineaSimple.codigo=codigo_unico
+
+                // Aqui tenemos la diferencia
+                // Si es una etiqueta antigua llamamos al modal para que ingrese los pies
+                // Si es nueva cogemos los pies del desglose del string leido
+                if (codigo.length == LONGITUD_ETIQUETA_ANTIGUA) {
+                    lineasComletas[indexActual].desglose.add(lineaSimple)
+                    mostrarModal(indexActual, lineasComletas[indexActual].desglose.size-1)
+                }
+                if(codigo.length == LONGITUD_ETIQUETA_NUEVA){
+                    var pies = (codigo.substring(INICIO_PIES, FIN_PIES-2) + "." + codigo.substring(FIN_PIES-2, FIN_PIES)).toFloat()
+                    lineasComletas[indexActual].desglose.add(lineaSimple)
+                    lineasComletas[indexActual].desglose[lineasComletas[indexActual].desglose.size-1].pies = pies // Actualizamos la línea del ArrayCompleto
+                    setUpRecyclerView()
                 }
             }
-
+        }else{
+            Toast.makeText(this, "Código inválido", Toast.LENGTH_LONG).show()
         }
 
 
-        // Los codigos son claves únicas asi que nunca se repiten
-        // Sino se ha encontrado o es la primera lectura
-        if (!encontrado || lineasComletas.isEmpty()) {
-
-            // comprobamos si la partida existe y sino la agregegamos
-            var indexEncontrado = -1
-            for (i in lineasComletas.indices) {
-              if(lineasComletas[i].partida.equals(partida)){
-                  indexEncontrado=i
-              }
-            }
-
-            // Si no se encuentra se Agrega uno nuevo
-            var indexActual:Int
-            if(indexEncontrado==-1){
-                val nuevaLinea = Linea()
-                nuevaLinea.partida = partida
-                lineasComletas.add(nuevaLinea)
-                indexActual=lineasComletas.size-1
-            }
-            // Si se encuentra nos posicionamos en el para añadir lo leido en su subarray
-            else{
-                indexActual=indexEncontrado
-            }
-
-            //Ahora añadimos la linea con el codigo bueno y los pies en el array LineaSimple
-            var lineaSimple=LineaSimple()
-            lineaSimple.codigo=codigo_unico
-
-            // Aqui tenemos la diferencia
-            // Si es una etiqueta antigua llamamos al modal para que ingrese los pies
-            // Si es nueva cogemos los pies del desglose del string leido
-            if (codigo.length == LONGITUD_ETIQUETA_ANTIGUA) {
-                lineasComletas[indexActual].desglose.add(lineaSimple)
-                mostrarModal(indexActual, lineasComletas[indexActual].desglose.size-1)
-            } else {
-                lineaSimple.pies = codigo.substring(INICIO_PIES, FIN_PIES).toFloat()
-                lineasComletas[indexActual].desglose.add(lineaSimple)
-            }
-
-
-
-
-
-        }
     }
 
     private fun mostrarModal(posicion: Int, posicionSubArray:Int) {
